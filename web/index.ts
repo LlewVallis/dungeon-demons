@@ -89,6 +89,19 @@ addStartListeners();
 
 window.addEventListener("contextmenu", (e) => e.preventDefault());
 
+window.addEventListener("touchstart", (e) => e.preventDefault(), {
+  passive: false,
+});
+window.addEventListener("touchend", (e) => e.preventDefault(), {
+  passive: false,
+});
+window.addEventListener("touchmove", (e) => e.preventDefault(), {
+  passive: false,
+});
+window.addEventListener("touchcancel", (e) => e.preventDefault(), {
+  passive: false,
+});
+
 let game: Game;
 
 class Game {
@@ -213,8 +226,8 @@ class Game {
     const centerX = rect.x + rect.width / 2;
     const centerY = rect.y + rect.height / 2;
 
-    const x = (touch.clientX - centerX) / rect.width * 2;
-    const y = (centerY - touch.clientY) / rect.height * 2;
+    const x = ((touch.clientX - centerX) / rect.width) * 2;
+    const y = ((centerY - touch.clientY) / rect.height) * 2;
 
     const offset = new Vec2(x, y);
 
