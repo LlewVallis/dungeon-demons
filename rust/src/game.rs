@@ -99,10 +99,6 @@ impl Game {
         self.world.insert(Delta(delta));
         self.world.fetch_mut::<Timestamp>().0 += delta;
 
-        if let Some(bounds) = self.world.controlled_player_read::<Bounds>() {
-            self.world.fetch_mut::<Focus>().0 = bounds.0.center();
-        }
-
         ReduceAttackCooldowns.run_now(&self.world);
 
         self.world.fetch_mut::<DisplayedInteraction>().0 = Interaction::current(&self.world);
@@ -120,6 +116,10 @@ impl Game {
 
         self.world.maintain();
         self.maintain_controlled_player();
+
+        if let Some(bounds) = self.world.controlled_player_read::<Bounds>() {
+            self.world.fetch_mut::<Focus>().0 = bounds.0.center();
+        }
     }
 
     pub fn enable_hud(&mut self) {
