@@ -152,7 +152,9 @@ impl SpawnEnemies {
 
                 let ideal_deviation_penalty = ideal_deviation / 10.0;
                 let closeness_penalty = 0.75 / closest.powi(2);
-                let score = (5.0 - ideal_deviation_penalty - closeness_penalty).max(0.0).cbrt();
+                let score = (5.0 - ideal_deviation_penalty - closeness_penalty)
+                    .max(0.0)
+                    .cbrt();
 
                 (spawn, score)
             })

@@ -72,6 +72,11 @@ impl Backend {
         self.game.inputs().key_up(key);
     }
 
+    #[wasm_bindgen(js_name = updateJoystick)]
+    pub fn update_joystick(&mut self, x: f64, y: f64) {
+        *self.game.inputs().joystick_mut() = vec2(x, y).normalize_or_zero();
+    }
+
     #[wasm_bindgen(js_name = updateMouse)]
     pub fn update_mouse(&mut self, x: f64, y: f64) {
         *self.game.inputs().mouse_mut() = vec2(x, y);

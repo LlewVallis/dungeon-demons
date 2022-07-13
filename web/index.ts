@@ -7,11 +7,13 @@ import Graphics from "./graphics";
 import DrawBuffer from "./graphics/drawBuffer";
 import Vec2 from "./math/vec2";
 import { all } from "./util";
+import isMobile from "./detect-mobile";
 
 const MAX_TICK_DELTA = 0.05;
 const MAX_TICKS_PER_FRAME = 2;
 const PERF_REPORT_INTERVAL = 5;
 
+const joystickElement = document.getElementById("joystick")!!;
 const welcomeElement = document.getElementById("welcome")!!;
 const hudElement = document.getElementById("hud")!!;
 const transitionScreenElement = document.getElementById("transition-screen")!!;
@@ -20,6 +22,12 @@ const creditsElement = document.getElementById("credits-display")!!;
 const interactHeadingElement = document.getElementById("interact-heading")!!;
 const interactCaptionElement = document.getElementById("interact-caption")!!;
 const ammoElement = document.getElementById("ammo-display")!!;
+
+const joystickImage = require("/assets/joystick.png");
+if (isMobile()) {
+  joystickElement.style.backgroundImage = `url(${joystickImage})`;
+  joystickElement.style.display = "";
+}
 
 const startKeys = [
   "KeyW",
@@ -32,21 +40,54 @@ const startKeys = [
   "ArrowDown",
 ];
 
-const startListener = (event: KeyboardEvent) => {
+const startKeyListener = (event: KeyboardEvent) => {
   if (!startKeys.includes(event.code)) {
     return;
   }
 
-  window.removeEventListener("keydown", startListener);
+  startPlaying();
+};
 
+const startTouchListener = (event: TouchEvent) => {
+  let found = false;
+  for (const touch of event.touches) {
+    if (isJoystickTouch(touch)) {
+      found = true;
+      break;
+    }
+  }
+
+  if (!found) {
+    return;
+  }
+
+  startPlaying();
+};
+
+function isJoystickTouch(touch: Touch): boolean {
+  return touch.target === joystickElement;
+}
+
+function startPlaying() {
+  removeStartListeners();
   welcomeElement.style.opacity = "0";
   hudElement.style.display = "";
   game.play();
-};
+}
 
-window.addEventListener("keydown", startListener);
+function addStartListeners() {
+  window.addEventListener("keydown", startKeyListener);
+  window.addEventListener("touchstart", startTouchListener);
+}
 
-window.addEventListener("contextmenu", e => e.preventDefault());
+function removeStartListeners() {
+  window.removeEventListener("keydown", startKeyListener);
+  window.removeEventListener("touchstart", startTouchListener);
+}
+
+addStartListeners();
+
+window.addEventListener("contextmenu", (e) => e.preventDefault());
 
 let game: Game;
 
@@ -136,6 +177,44 @@ class Game {
   };
 
   private readonly touchListener = (event: TouchEvent) => {
+    if (event.type === "touchstart") {
+      for (const touch of event.changedTouches) {
+        if (!isJoystickTouch(touch)) {
+          const mouse = this.mapMouseCoordinates(touch.clientX, touch.clientY);
+          this.backend.mouseDown(mouse.x, mouse.y);
+        }
+      }
+    }
+
+    if (event.type === "touchend" || event.type === "touchcancel") {
+      for (const touch of event.changedTouches) {
+        if (!isJoystickTouch(touch)) {
+          const mouse = this.mapMouseCoordinates(touch.clientX, touch.clientY);
+          this.backend.mouseUp(mouse.x, mouse.y);
+        }
+      }
+    }
+
+    this.backend.updateJoystick(0, 0);
+
+    for (const touch of event.touches) {
+      if (isJoystickTouch(touch)) {
+        const offset = this.joystickOffset(touch);
+        this.backend.updateJoystick(offset.x, offset.y);
+      } else {
+        this.mouseX = touch.clientX;
+        this.mouseY = touch.clientY;
+      }
+    }
+  };
+
+  private joystickOffset(touch: Touch): Vec2 {
+    const rect = joystickElement.getBoundingClientRect();
+    const centerX = rect.x + rect.width / 2;
+    const centerY = rect.y + rect.height / 2;
+
+    const offset = new Vec2(touch.clientX - centerX, centerY - touch.clientY);
+    return offset.normalizeOrZero();
   }
 
   private mapMouseCoordinates(x: number, y: number): Vec2 {
@@ -249,7 +328,7 @@ class Game {
     setTimeout(() => {
       this.dispose();
       game = new Game();
-      window.addEventListener("keydown", startListener);
+      addStartListeners();
       transitionScreenElement.style.opacity = "0";
       hudElement.style.display = "none";
       welcomeElement.style.opacity = "";

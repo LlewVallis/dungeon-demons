@@ -359,7 +359,7 @@ impl Chunk {
         let successors = |coord: &Coord| self.pathfinding_successors(*coord, awkward_points);
         let heuristic = |coord: &Coord| coord.distance(end);
 
-        if let Some((nodes, _)) = astar(&start, successors, heuristic, |coord| *coord == end)  {
+        if let Some((nodes, _)) = astar(&start, successors, heuristic, |coord| *coord == end) {
             self.fill_path(nodes);
         }
     }

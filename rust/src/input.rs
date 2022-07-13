@@ -5,6 +5,7 @@ use std::mem;
 
 pub struct Inputs {
     mouse: Vec2,
+    joystick: Vec2,
     mouse_down: bool,
     events: Vec<Event>,
     down_keys: HashSet<String>,
@@ -14,10 +15,15 @@ impl Inputs {
     pub fn new() -> Self {
         Self {
             mouse: Vec2::zero(),
+            joystick: Vec2::zero(),
             mouse_down: false,
             events: Vec::new(),
             down_keys: HashSet::new(),
         }
+    }
+
+    pub fn joystick_mut(&mut self) -> &mut Vec2 {
+        &mut self.joystick
     }
 
     pub fn mouse(&self) -> Vec2 {
@@ -66,7 +72,7 @@ impl Inputs {
     }
 
     pub fn movement_direction(&self) -> Vec2 {
-        let mut direction = Vec2::zero();
+        let mut direction = self.joystick;
 
         if self.is_key_down("KeyW") || self.is_key_down("ArrowUp") {
             direction += vec2(0.0, 1.0);
