@@ -168,7 +168,10 @@ fn attack(world: &mut World) {
     };
 
     if let Some(attack) = AttackParameters::calculate(world, player) {
-        world.unwrap_read::<Player>(player).selected_gun().play_sound();
+        world
+            .unwrap_read::<Player>(player)
+            .selected_gun()
+            .play_sound();
 
         for _ in 0..attack.bullet_count {
             let variation = Random::global().next_f64_in(-1.0..1.0);

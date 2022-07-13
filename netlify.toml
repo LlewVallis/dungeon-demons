@@ -1,0 +1,14 @@
+[[headers]]
+    for = "/*"
+    [headers.values]
+        Cache-Control = "public, max-age=604800"
+
+[[headers]]
+    for = "/index.html"
+    [headers.values]
+        Cache-Control = "public, max-age=604800"
+
+[[headers]]
+    for = "/favicon.png"
+    [headers.values]
+        Cache-Control = "public, max-age=604800"

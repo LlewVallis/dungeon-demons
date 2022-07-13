@@ -33,8 +33,8 @@ mod logging;
 mod map;
 mod progression;
 mod util;
-mod weapon_positioning;
 mod weapon_hud;
+mod weapon_positioning;
 
 #[wasm_bindgen(start)]
 pub fn start() {

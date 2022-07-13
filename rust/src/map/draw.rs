@@ -6,7 +6,7 @@ use specs::{Entity, ReadExpect, System, World, WriteExpect};
 use crate::camera::Camera;
 use crate::components::sprite::FrameSprites;
 use crate::ecs::ReadControlledPlayer;
-use crate::game::{Timestamp};
+use crate::game::Timestamp;
 use crate::graphics::{texture, DrawBuffer, EntityRendererSettings};
 use crate::map::chunk::CHUNK_SIZE_I32;
 use crate::map::{Map, Tile};

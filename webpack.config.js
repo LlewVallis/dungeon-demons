@@ -14,7 +14,7 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       template: "web/index.html",
-      favicon: "assets/favicon.png"
+      favicon: "assets/favicon.png",
     }),
   ],
   resolve: {

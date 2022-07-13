@@ -1,12 +1,12 @@
-use specs::{System, WriteExpect};
-use specs::prelude::*;
 use crate::camera::Camera;
 use crate::components::player::Player;
 use crate::ecs::ReadControlledPlayerStorage;
-use crate::graphics::{DrawBuffer, EntityRendererSettings, texture};
-use crate::{Mat3, vec2};
 use crate::game::HudEnabled;
+use crate::graphics::{texture, DrawBuffer, EntityRendererSettings};
 use crate::util::vector::Vec2;
+use crate::{vec2, Mat3};
+use specs::prelude::*;
+use specs::{System, WriteExpect};
 
 const BASE_SIZE: f64 = 0.25;
 const BASE_GAP: f64 = -0.05;

@@ -1,6 +1,6 @@
+use crate::audio::{play_sound, sound};
 use serde::{Serialize, Serializer};
 use specs::{Entity, World};
-use crate::audio::{play_sound, sound};
 
 use crate::components::bounds::Bounds;
 use crate::components::player::Player;

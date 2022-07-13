@@ -1,7 +1,6 @@
-use std::ops::DerefMut;
 use specs::{Entity, Join, RunNow, World, WorldExt};
+use std::ops::DerefMut;
 
-use crate::{Inputs, vec2};
 use crate::camera::Camera;
 use crate::components::bounds::Bounds;
 use crate::components::bullet::{Bullet, BulletTarget, UpdateBullets};
@@ -13,12 +12,12 @@ use crate::components::player::{Player, ReduceAttackCooldowns};
 use crate::components::player_seeker::{PlayerSeeker, SeekPlayers};
 use crate::components::regen::{HealthRegen, RegenerateHealth};
 use crate::components::spawning_demon::{FinishDemonSpawning, SpawningDemon};
-use crate::components::sprite::{DrawSprites, FrameSprites};
 use crate::components::sprite::animation::{Animation, GenerateAnimationSprites};
 use crate::components::sprite::character_animation::{
-    CharacterAnimation, FacesVelocity, FaceToVelocities, Facing, GenerateCharacterAnimationSprites,
+    CharacterAnimation, FaceToVelocities, FacesVelocity, Facing, GenerateCharacterAnimationSprites,
 };
 use crate::components::sprite::sprite::{GenerateStaticSprites, Sprite};
+use crate::components::sprite::{DrawSprites, FrameSprites};
 use crate::ecs::WorldExtensions;
 use crate::entities::player;
 use crate::graphics::{DrawBuffer, ResetDrawBuffer};
@@ -32,6 +31,7 @@ use crate::util::rect::Rect;
 use crate::util::vector::Vec2;
 use crate::weapon_hud::DrawWeaponHud;
 use crate::weapon_positioning::DrawHeldWeapons;
+use crate::{vec2, Inputs};
 
 pub const SCREEN_HEIGHT: f64 = 7.5;
 
@@ -90,9 +90,7 @@ impl Game {
         let player = player::create(&mut world, vec2(0.5, 0.5));
         world.insert(ControlledPlayer(player));
 
-        Game {
-            world,
-        }
+        Game { world }
     }
 
     pub fn tick(&mut self, delta: f64) {
@@ -194,7 +192,8 @@ impl Game {
         let default = UiText::new();
         let interaction = self.world.fetch::<DisplayedInteraction>();
 
-        let heading = interaction.0
+        let heading = interaction
+            .0
             .as_ref()
             .map(Interaction::heading)
             .unwrap_or(&default);
@@ -206,7 +205,8 @@ impl Game {
         let default = UiText::new();
         let interaction = self.world.fetch::<DisplayedInteraction>();
 
-        let heading = interaction.0
+        let heading = interaction
+            .0
             .as_ref()
             .map(Interaction::caption)
             .unwrap_or(&default);

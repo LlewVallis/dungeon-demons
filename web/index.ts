@@ -91,7 +91,8 @@ class Game {
   }
 
   private readonly navigateListener = (event: Event) => {
-    const playing = this.playTime !== null && performance.now() > this.playTime + 30_000;
+    const playing =
+      this.playTime !== null && performance.now() > this.playTime + 30_000;
     if (playing && !this.backend.isOver()) {
       event.preventDefault();
     }
@@ -311,7 +312,7 @@ class Game {
       () => window.removeEventListener("beforeunload", this.navigateListener),
       () => this.cancelPerformanceReporter(),
       () => this.backend.free(),
-      () => this.graphics.dispose(),
+      () => this.graphics.dispose()
     );
   }
 }

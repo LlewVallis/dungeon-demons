@@ -42,7 +42,7 @@ class State {
       () => this.texture.dispose(),
       () => this.quad.dispose(),
       () => this.entityShader.dispose(),
-      () => this.vignetteShader.dispose(),
+      () => this.vignetteShader.dispose()
     );
   }
 }

@@ -1,8 +1,8 @@
 use std::rc::Rc;
 
+use crate::audio::{play_sound, sound};
 use fxhash::FxHashMap;
 use lazy_static::lazy_static;
-use crate::audio::{play_sound, sound};
 
 use crate::graphics::texture;
 use crate::util::random::Random;

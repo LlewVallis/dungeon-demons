@@ -74,6 +74,8 @@ impl Chest {
             if self.exhausted_players.contains(&player) {
                 return;
             }
+        } else {
+            return;
         }
 
         if let Some(gun) = &self.gun {
