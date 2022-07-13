@@ -17,7 +17,7 @@ pub const SPAWNER_SEARCH_SIZE: f64 = 50.0;
 
 const SPAWNER_PATHFIND_THRESHOLD: f64 = 75.0;
 
-const IDEAL_SPAWN_DISTANCE: f64 = 15.0;
+const IDEAL_SPAWN_DISTANCE: f64 = 8.0;
 
 const DEFAULT_SPAWN_LOCATION: Vec2 = vec2(4.5, 0.5);
 
@@ -150,9 +150,9 @@ impl SpawnEnemies {
                 let target_distance = Vec2::distance(player_position, spawn);
                 let ideal_deviation = (target_distance - IDEAL_SPAWN_DISTANCE).abs();
 
-                let ideal_deviation_penalty = ideal_deviation / 15.0;
-                let closeness_penalty = 8.0 / closest.powi(2);
-                let score = (1.0 - ideal_deviation_penalty - closeness_penalty).max(0.1);
+                let ideal_deviation_penalty = ideal_deviation / 10.0;
+                let closeness_penalty = 0.75 / closest.powi(2);
+                let score = (5.0 - ideal_deviation_penalty - closeness_penalty).max(0.0).cbrt();
 
                 (spawn, score)
             })
