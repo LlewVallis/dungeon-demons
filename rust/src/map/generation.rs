@@ -17,7 +17,7 @@ const MAX_ROOM_ATTEMPTS: usize = CHUNK_SIZE.pow(2);
 const ROOM_GAP: i32 = 1;
 
 const MIN_ROOM_SIZE: usize = 3;
-const AVERAGE_ROOM_SIZE: f64 = 4.25;
+const AVERAGE_ROOM_SIZE: f64 = 5.0;
 const MAX_ROOM_SIZE: usize = 12;
 
 const TILES_PER_CHUNK_ENTRY: usize = 8;
@@ -25,7 +25,7 @@ const TILES_PER_CHUNK_ENTRY: usize = 8;
 const STARTING_ROOM_SHIFT: i32 = 2;
 const EXTRA_EDGE_CHANCE: f64 = 0.33;
 
-const PATHFINDING_TUNNEL_COST: u32 = 10;
+const PATHFINDING_TUNNEL_COST: u32 = 5;
 
 const SIDE_LENGTH_PER_SPAWNER: i32 = 4;
 const DECORATION_CHANCE: f64 = 0.033;
@@ -358,15 +358,19 @@ impl Chunk {
     fn create_path(&mut self, start: Coord, end: Coord, awkward_points: &HashSet<Coord>) {
         let successors = |coord: &Coord| self.pathfinding_successors(*coord, awkward_points);
         let heuristic = |coord: &Coord| coord.distance(end);
-        let (nodes, _) = astar(&start, successors, heuristic, |coord| *coord == end).unwrap();
-        self.fill_path(nodes);
+
+        if let Some((nodes, _)) = astar(&start, successors, heuristic, |coord| *coord == end)  {
+            self.fill_path(nodes);
+        }
     }
 
     fn create_chunk_entry(&mut self, start: Coord, awkward_points: &HashSet<Coord>) {
         let successors = |coord: &Coord| self.pathfinding_successors(*coord, awkward_points);
         let success = |coord: &Coord| self.at(*coord).is_walkable();
-        let (nodes, _) = dijkstra(&start, successors, success).unwrap();
-        self.fill_path(nodes);
+
+        if let Some((nodes, _)) = dijkstra(&start, successors, success) {
+            self.fill_path(nodes);
+        }
     }
 
     fn pathfinding_successors<'a>(
@@ -379,14 +383,13 @@ impl Chunk {
         options
             .into_iter()
             .filter(|coord| Self::in_bounds(*coord))
-            .map(|coord| (coord, self.pathfinding_cost(coord, awkward_points)))
+            .filter(|coord| !awkward_points.contains(coord))
+            .map(|coord| (coord, self.pathfinding_cost(coord)))
     }
 
-    fn pathfinding_cost(&self, coord: Coord, awkward_points: &HashSet<Coord>) -> u32 {
+    fn pathfinding_cost(&self, coord: Coord) -> u32 {
         if self.at(coord) != Tile::Wall {
             1
-        } else if awkward_points.contains(&coord) {
-            PATHFINDING_TUNNEL_COST * 10
         } else {
             PATHFINDING_TUNNEL_COST
         }
