@@ -1,0 +1,22 @@
+{
+  "private": true,
+  "name": "dungeon-demons",
+  "scripts": {
+    "build": "webpack",
+    "serve": "webpack serve",
+    "dev": "NODE_ENV=development webpack serve",
+    "format": "prettier --write .; cd rust && cargo fmt"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.0",
+    "@babel/preset-typescript": "^7.17.12",
+    "@wasm-tool/wasm-pack-plugin": "^1.6.0",
+    "babel-loader": "^8.2.5",
+    "html-webpack-plugin": "^5.5.0",
+    "prettier": "^2.6.2",
+    "webpack": "^5.72.1",
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.9.0",
+    "webpack-glsl-loader": "^1.0.1"
+  }
+}

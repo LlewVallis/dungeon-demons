@@ -1,0 +1,7 @@
+dist/
+node_modules/
+rust/
+pkg/
+package-lock.json
+*.vert
+*.frag
