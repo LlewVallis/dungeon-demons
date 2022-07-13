@@ -90,7 +90,11 @@ impl Inputs {
             direction += vec2(1.0, 0.0);
         }
 
-        direction.normalize_or_zero()
+        if direction.length() > 1.0 {
+            direction.normalize()
+        } else {
+            direction
+        }
     }
 }
 

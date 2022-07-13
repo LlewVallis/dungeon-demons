@@ -213,8 +213,16 @@ class Game {
     const centerX = rect.x + rect.width / 2;
     const centerY = rect.y + rect.height / 2;
 
-    const offset = new Vec2(touch.clientX - centerX, centerY - touch.clientY);
-    return offset.normalizeOrZero();
+    const x = (touch.clientX - centerX) / rect.width * 2;
+    const y = (centerY - touch.clientY) / rect.height * 2;
+
+    const offset = new Vec2(x, y);
+
+    if (offset.length() > 1) {
+      return offset.normalize();
+    } else {
+      return offset;
+    }
   }
 
   private mapMouseCoordinates(x: number, y: number): Vec2 {
