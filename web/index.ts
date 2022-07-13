@@ -73,13 +73,15 @@ class Game {
   private mouseX = 0;
   private mouseY = 0;
 
+  private transitioning = false;
+
   constructor() {
     const seed = Math.floor(Math.random() * Math.pow(2, 32));
     console.info(`Using seed ${seed}`);
 
     this.backend = new Wasm.Backend(seed);
 
-    this.addKeyListeners();
+    this.addInputListeners();
     window.addEventListener("beforeunload", this.navigateListener);
     this.performanceReportTask = this.addPerformanceReporter();
 
@@ -133,6 +135,9 @@ class Game {
     this.backend.keyUp(event.code);
   };
 
+  private readonly touchListener = (event: TouchEvent) => {
+  }
+
   private mapMouseCoordinates(x: number, y: number): Vec2 {
     const canvas = this.graphics.canvas;
     const rect = canvas.getBoundingClientRect();
@@ -145,20 +150,28 @@ class Game {
     return new Vec2(clampedX * this.graphics.aspectRatio, clampedY);
   }
 
-  private addKeyListeners(): void {
+  private addInputListeners(): void {
     document.addEventListener("mousemove", this.mouseMoveListener);
     document.addEventListener("mousedown", this.mouseDownListener);
     document.addEventListener("mouseup", this.mouseUpListener);
     document.addEventListener("keydown", this.keyDownListener);
     document.addEventListener("keyup", this.keyUpListener);
+    document.addEventListener("touchstart", this.touchListener);
+    document.addEventListener("touchend", this.touchListener);
+    document.addEventListener("touchmove", this.touchListener);
+    document.addEventListener("touchcancel", this.touchListener);
   }
 
-  private removeKeyListeners(): void {
+  private removeInputListeners(): void {
     document.removeEventListener("mousemove", this.mouseMoveListener);
     document.removeEventListener("mousedown", this.mouseDownListener);
     document.removeEventListener("mouseup", this.mouseUpListener);
     document.removeEventListener("keydown", this.keyDownListener);
     document.removeEventListener("keyup", this.keyUpListener);
+    document.removeEventListener("touchstart", this.touchListener);
+    document.removeEventListener("touchend", this.touchListener);
+    document.removeEventListener("touchmove", this.touchListener);
+    document.removeEventListener("touchcancel", this.touchListener);
   }
 
   private addPerformanceReporter(): number {
@@ -225,6 +238,12 @@ class Game {
   }
 
   private handleGameOver(): void {
+    if (this.transitioning) {
+      return;
+    }
+
+    this.transitioning = true;
+
     transitionScreenElement.style.opacity = "1";
 
     setTimeout(() => {
@@ -310,7 +329,7 @@ class Game {
   dispose(): void {
     all(
       () => this.cancelLoop(),
-      () => this.removeKeyListeners(),
+      () => this.removeInputListeners(),
       () => window.removeEventListener("beforeunload", this.navigateListener),
       () => this.cancelPerformanceReporter(),
       () => this.backend.free(),
