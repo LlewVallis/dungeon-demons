@@ -46,6 +46,8 @@ const startListener = (event: KeyboardEvent) => {
 
 window.addEventListener("keydown", startListener);
 
+window.addEventListener("contextmenu", e => e.preventDefault());
+
 let game: Game;
 
 class Game {
