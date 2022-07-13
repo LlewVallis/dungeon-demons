@@ -355,7 +355,6 @@ enum Modifier {
     Forceful,
     Unhinged,
     Wild,
-    Heroic,
 }
 
 impl Modifier {
@@ -368,7 +367,6 @@ impl Modifier {
             Modifier::Forceful => "Forceful ",
             Modifier::Unhinged => "Unhinged ",
             Modifier::Wild => "Wild ",
-            Modifier::Heroic => "Heroic ",
         }
     }
 
@@ -402,12 +400,6 @@ impl Modifier {
                 spec.bullet_count *= 2;
                 spec.accuracy *= 0.5;
             }
-            Modifier::Heroic => {
-                spec.damage *= 10.0;
-                spec.knockback *= 5.0;
-                spec.accuracy = spec.accuracy.max(50.0);
-                spec.ammo = (spec.ammo / 15).max(1);
-            }
         }
     }
 
@@ -420,7 +412,6 @@ impl Modifier {
             Modifier::Forceful => 1.5,
             Modifier::Unhinged => 2.0,
             Modifier::Wild => 1.5,
-            Modifier::Heroic => 2.0,
         }
     }
 }
@@ -433,5 +424,4 @@ const MODIFIERS: &[Modifier] = &[
     Modifier::Forceful,
     Modifier::Unhinged,
     Modifier::Wild,
-    Modifier::Heroic,
 ];
