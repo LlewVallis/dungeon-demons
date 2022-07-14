@@ -5,6 +5,7 @@ use specs::{Entity, World};
 use crate::components::bounds::Bounds;
 use crate::components::player::Player;
 use crate::ecs::WorldExtensions;
+use crate::game::IsMobile;
 use crate::gun::GunSpec;
 use crate::map::chest::Chest;
 use crate::map::{Map, Tile};
@@ -265,9 +266,12 @@ impl Interaction {
 
     fn cost_caption(world: &World, cost: usize) -> UiText {
         let credits = Self::controlled_player_credits(world).unwrap_or(0);
+        let is_mobile = world.fetch::<IsMobile>().0;
 
         if credits < cost {
             UiText::of("Insufficient funds", TextColor::red())
+        } else if is_mobile {
+            UiText::of("Tap joystick to purchase", TextColor::green())
         } else {
             UiText::of("Press SPACE to purchase", TextColor::green())
         }

@@ -7,14 +7,16 @@ import Graphics from "./graphics";
 import DrawBuffer from "./graphics/drawBuffer";
 import Vec2 from "./math/vec2";
 import { all } from "./util";
-import isMobile from "./detect-mobile";
+import isMobileDetected from "./detect-mobile";
 
+const TAP_TIME = 150;
 const MAX_TICK_DELTA = 0.05;
 const MAX_TICKS_PER_FRAME = 2;
 const PERF_REPORT_INTERVAL = 5;
 
 const joystickElement = document.getElementById("joystick")!!;
 const welcomeElement = document.getElementById("welcome")!!;
+const playInstructionsElement = document.getElementById("play-instructions")!!;
 const hudElement = document.getElementById("hud")!!;
 const transitionScreenElement = document.getElementById("transition-screen")!!;
 const roundElement = document.getElementById("round-display")!!;
@@ -23,10 +25,13 @@ const interactHeadingElement = document.getElementById("interact-heading")!!;
 const interactCaptionElement = document.getElementById("interact-caption")!!;
 const ammoElement = document.getElementById("ammo-display")!!;
 
+const isMobile = isMobileDetected();
+
 const joystickImage = require("/assets/joystick.png");
-if (isMobile()) {
+if (isMobile) {
   joystickElement.style.backgroundImage = `url(${joystickImage})`;
   joystickElement.style.display = "";
+  playInstructionsElement.innerText = "Use the joystick to play";
 }
 
 const startKeys = [
@@ -127,13 +132,15 @@ class Game {
   private mouseX = 0;
   private mouseY = 0;
 
+  private joystickTouchStart: number | null = null;
+
   private transitioning = false;
 
   constructor() {
     const seed = Math.floor(Math.random() * Math.pow(2, 32));
     console.info(`Using seed ${seed}`);
 
-    this.backend = new Wasm.Backend(seed);
+    this.backend = new Wasm.Backend(seed, isMobile);
 
     this.addInputListeners();
     window.addEventListener("beforeunload", this.navigateListener);
@@ -195,6 +202,8 @@ class Game {
         if (!isJoystickTouch(touch)) {
           const mouse = this.mapMouseCoordinates(touch.clientX, touch.clientY);
           this.backend.mouseDown(mouse.x, mouse.y);
+        } else {
+          this.joystickTouchStart = performance.now();
         }
       }
     }
@@ -204,6 +213,15 @@ class Game {
         if (!isJoystickTouch(touch)) {
           const mouse = this.mapMouseCoordinates(touch.clientX, touch.clientY);
           this.backend.mouseUp(mouse.x, mouse.y);
+        } else {
+          if (this.joystickTouchStart !== null) {
+            console.log(performance.now() - this.joystickTouchStart);
+            if (performance.now() - this.joystickTouchStart <= TAP_TIME) {
+              this.backend.joystickTap();
+            }
+          }
+
+          this.joystickTouchStart = null;
         }
       }
     }

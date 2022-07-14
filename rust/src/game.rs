@@ -47,12 +47,14 @@ pub struct HudEnabled(pub bool);
 
 pub struct Focus(Vec2);
 
+pub struct IsMobile(pub bool);
+
 pub struct Game {
     world: World,
 }
 
 impl Game {
-    pub fn new(seed: u32) -> Self {
+    pub fn new(seed: u32, is_mobile: bool) -> Self {
         *Random::global() = Random::new(seed);
 
         let mut world = World::new();
@@ -68,6 +70,7 @@ impl Game {
         world.insert(DisplayedInteraction(None));
         world.insert(HudEnabled(false));
         world.insert(Focus(vec2(0.5, 0.5)));
+        world.insert(IsMobile(is_mobile));
 
         world.register::<Bounds>();
         world.register::<Sprite>();

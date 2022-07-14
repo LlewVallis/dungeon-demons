@@ -56,9 +56,9 @@ pub struct Backend {
 #[wasm_bindgen]
 impl Backend {
     #[wasm_bindgen(constructor)]
-    pub fn new(seed: u32) -> Self {
+    pub fn new(seed: u32, is_mobile: bool) -> Self {
         Self {
-            game: Game::new(seed),
+            game: Game::new(seed, is_mobile),
         }
     }
 
@@ -75,6 +75,11 @@ impl Backend {
     #[wasm_bindgen(js_name = updateJoystick)]
     pub fn update_joystick(&mut self, x: f64, y: f64) {
         *self.game.inputs().joystick_mut() = vec2(x, y);
+    }
+    
+    #[wasm_bindgen(js_name = joystickTap)]
+    pub fn joystick_tap(&mut self) {
+        self.game.inputs().joystick_tap();
     }
 
     #[wasm_bindgen(js_name = updateMouse)]

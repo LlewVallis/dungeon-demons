@@ -25,6 +25,10 @@ impl Inputs {
     pub fn joystick_mut(&mut self) -> &mut Vec2 {
         &mut self.joystick
     }
+    
+    pub fn joystick_tap(&mut self) {
+        self.events.push(Event::JoystickTap);
+    }
 
     pub fn mouse(&self) -> Vec2 {
         self.mouse
@@ -103,4 +107,5 @@ pub enum Event {
     KeyDown { key: String },
     MouseDown { position: Vec2 },
     MouseUp { position: Vec2 },
+    JoystickTap,
 }

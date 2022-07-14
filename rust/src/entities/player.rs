@@ -78,6 +78,9 @@ pub fn handle_input(world: &mut World, mouse_position: Vec2) {
             Event::KeyDown { key } if key == "Space" => {
                 Interaction::attempt_interact(world);
             }
+            Event::JoystickTap => {
+                Interaction::attempt_interact(world);
+            }
             Event::KeyDown { key } => {
                 if let Some(slot) = parse_digit_key(&key) {
                     select_slot(world, slot);
